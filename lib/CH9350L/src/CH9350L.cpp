@@ -53,6 +53,20 @@ bool CH9350L::sendCommand(const uint8_t *data, size_t len)
     return written == len;
 }
 
+bool CH9350L::setKeyboardIndicators(uint8_t leds)
+{
+    // Construct a "specific data" 11-byte frame based on datasheet examples.
+    // This frame type (0x12) is used for specific data/commands. The datasheet
+    // documents keyboard indicator setting as supported in working state 2.
+    uint8_t frame[11] = { 0x57, 0xAB, 0x12,
+                          0x00, 0x00, 0x00, 0x00, // placeholder / PID fields
+                          0xFF, 0xFF,             // fixed fields in examples
+                          static_cast<uint8_t>(leds & 0x07), // indicator bits (0-7)
+                          0x20 }; // command code used in examples for specific-data commands
+
+    return sendCommand(frame, sizeof(frame));
+}
+
 // CH9350L frame parser based on datasheet
 // Frames start with 0x57 0xAB then a type byte. For common payloads:
 //  - 0x01 : 8-byte keyboard report (USB standard: [mods][reserved][k1..k6])

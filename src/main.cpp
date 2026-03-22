@@ -82,10 +82,31 @@ void setup() {
   ch.onMouseRelative(handleMouseRel);
   ch.onMouseAbsolute(handleMouseAbs);
 
+  // Example: set NumLock + CapsLock LEDs (requires CH9350L in working STATE 2)
+  // ch.setKeyboardIndicators(CH9350L::LED_NUM | CH9350L::LED_CAPS);
+
   Serial.println("CH9350L example initialized");
 }
 
 void loop() {
   ch.update(); // process incoming UART data from CH9350L
+
+  // Serial-controlled LED test (press keys on serial terminal):
+  // '1' = Num, '2' = Caps, '3' = Scroll, '0' = clear
+  static uint8_t cur_leds = 0;
+  if (Serial.available()) {
+    int c = Serial.read();
+    if (c == '1') cur_leds ^= CH9350L::LED_NUM;
+    else if (c == '2') cur_leds ^= CH9350L::LED_CAPS;
+    else if (c == '3') cur_leds ^= CH9350L::LED_SCROLL;
+    else if (c == '0') cur_leds = 0;
+
+    if (c == '1' || c == '2' || c == '3' || c == '0') {
+      bool ok = ch.setKeyboardIndicators(cur_leds);
+      Serial.print("setKeyboardIndicators -> "); Serial.println(ok ? "OK" : "ERR");
+      Serial.print("leds=0x"); Serial.println(cur_leds, HEX);
+    }
+  }
+
   delay(1);
 }

@@ -11,6 +11,17 @@ public:
     using MouseRelCallback = void(*)(uint8_t buttons, int8_t dx, int8_t dy, int8_t wheel);
     using MouseAbsCallback = void(*)(uint8_t id, uint8_t buttons, uint16_t x, uint16_t y, int8_t wheel);
 
+    // Keyboard LED bits (indicator report bits)
+    static constexpr uint8_t LED_NUM   = 0x01;
+    static constexpr uint8_t LED_CAPS  = 0x02;
+    static constexpr uint8_t LED_SCROLL= 0x04;
+
+    // Set keyboard indicators (Num/Caps/Scroll). NOTE: datasheet documents this
+    // command as supported in working *state 2* — it will not take effect while
+    // the chip is in state 0 (the default used by the rest of this library).
+    // Returns true if the command bytes were written to the UART.
+    bool setKeyboardIndicators(uint8_t leds);
+
     // Accept any Stream (HardwareSerial, SoftwareSerial, etc.)
     explicit CH9350L(Stream &stream);
 
@@ -99,8 +110,6 @@ inline void CH9350L_modsToString(uint8_t mods, char *buf, size_t buflen) {
     if (mods & CH9350L_MOD_RGUI) append("RGUI");
 }
 
-#endif // CH9350L_H
-
 // Helper: fill a small buffer with mouse button names
 inline void CH9350L_mouseBtnsToString(uint8_t btns, char *buf, size_t buflen) {
     if (buflen == 0) return;
@@ -120,3 +129,5 @@ inline void CH9350L_mouseBtnsToString(uint8_t btns, char *buf, size_t buflen) {
     if (btns & CH9350L_BTN_BACK) append("Back");
     if (btns & CH9350L_BTN_FORWARD) append("Fwd");
 }
+
+#endif // CH9350L_H

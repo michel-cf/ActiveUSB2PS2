@@ -72,7 +72,7 @@ Library structure
 Extending
 ---------
 
-The current parser implements keyboard reports and modifier change callbacks. If you want mouse events (relative/absolute) or handling of other CH9350L frames (status, device connection), open an issue or request specific frame handling.
+The current parser implements keyboard reports and modifier change callbacks. If you want handling of other CH9350L frames (status, device connection), open an issue or request specific frame handling.
 
 Hardware usage
 --------------
@@ -120,6 +120,24 @@ UART characteristics
 
 - Default UART parameters: 115200 bps, 8 data bits, 1 stop bit, no parity (8N1).
 - Output level is 3.3V (5V-tolerant interface is commonly provided by many breakouts). Observe BAUD pin voltage limits in the datasheet.
+
+Keyboard indicators API
+-----------------------
+
+This library provides a convenience helper to request keyboard indicator changes (Num/Caps/Scroll):
+
+- `bool CH9350L::setKeyboardIndicators(uint8_t leds)` — write a datasheet-style 11-byte "specific data" frame that requests the keyboard indicator state. The LED bit masks are available as `CH9350L::LED_NUM`, `CH9350L::LED_CAPS`, and `CH9350L::LED_SCROLL`.
+
+Important: the CH9350 datasheet documents setting keyboard indicators as supported in *working state 2*. The rest of this library operates the chip in *working state 0* to parse keyboard/mouse reports. The helper will still write the frame to the UART, but the keyboard LEDs will only change if the chip is in a working state that supports the indicator command (state 2). Use the wiring/state notes above to place the chip in a compatible state if you want the LEDs to change on the attached keyboard.
+
+Quick test via serial terminal: the example sketch now accepts single-character commands from the serial terminal to exercise the API while running on the device:
+
+- `1` — toggle/set Num Lock
+- `2` — toggle/set Caps Lock
+- `3` — toggle/set Scroll Lock
+- `0` — clear all indicators
+
+After issuing a command from the serial terminal the sketch sends the indicator frame over UART; check that your CH9350L is in a state that supports the command for the LEDs to actually light on the attached keyboard.
 
 Wiring examples (115200 and lower)
 ----------------------------------
