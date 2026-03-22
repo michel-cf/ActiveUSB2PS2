@@ -81,8 +81,6 @@ Hardware usage
 
 - Baud rates: the library works with standard UART baud rates. Choose one of these common rates and use the same value both for the Arduino `Serial` and for `ch.begin()`:
 
-  - 9600   -> `Serial.begin(9600); ch.begin(9600);`
-  - 19200  -> `Serial.begin(19200); ch.begin(19200);`
   - 38400  -> `Serial.begin(38400); ch.begin(38400);`
   - 57600  -> `Serial.begin(57600); ch.begin(57600);`
   - 115200 -> `Serial.begin(115200); ch.begin(115200);` (recommended)
