@@ -1,0 +1,15 @@
+{
+  "name": "CH9350L",
+  "version": "0.1.0",
+  "keywords": ["usb","keyboard","mouse","hid","ch9350"],
+  "description": "Arduino library for the CH9350L USB HID to UART bridge.",
+  "authors": [
+    { "name": "michel-lampo" }
+  ],
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "frameworks": ["arduino"],
+  "platforms": ["atmelavr", "espressif32", "atmelsam"]
+}

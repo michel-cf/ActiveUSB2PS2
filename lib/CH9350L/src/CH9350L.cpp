@@ -31,6 +31,11 @@ void CH9350L::onKeyUp(KeyCallback cb)
     _keyUpCb = cb;
 }
 
+void CH9350L::onModifiersChanged(ModCallback cb)
+{
+    _modCb = cb;
+}
+
 bool CH9350L::sendCommand(const uint8_t *data, size_t len)
 {
     if (!_stream) return false;
