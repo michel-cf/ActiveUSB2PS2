@@ -31,6 +31,16 @@ void CH9350L::onKeyUp(KeyCallback cb)
     _keyUpCb = cb;
 }
 
+void CH9350L::onMouseRelative(MouseRelCallback cb)
+{
+    _mouseRelCb = cb;
+}
+
+void CH9350L::onMouseAbsolute(MouseAbsCallback cb)
+{
+    _mouseAbsCb = cb;
+}
+
 void CH9350L::onModifiersChanged(ModCallback cb)
 {
     _modCb = cb;
@@ -134,6 +144,25 @@ void CH9350L::_parseByte(uint8_t b)
                     // update previous state
                     memcpy(_prevKeys, currKeys, 6);
                     _prevMods = mods;
+                }
+
+                // relative mouse: 4-byte (buttons, dx, dy, wheel)
+                if (_frameType == 0x02 && _expected == 4) {
+                    uint8_t buttons = _payload[0];
+                    int8_t dx = static_cast<int8_t>(_payload[1]);
+                    int8_t dy = static_cast<int8_t>(_payload[2]);
+                    int8_t wheel = static_cast<int8_t>(_payload[3]);
+                    if (_mouseRelCb) _mouseRelCb(buttons, dx, dy, wheel);
+                }
+
+                // absolute mouse: 7-byte (id, buttons, x_lo, x_hi, y_lo, y_hi, wheel)
+                if (_frameType == 0x04 && _expected == 7) {
+                    uint8_t id = _payload[0];
+                    uint8_t buttons = _payload[1];
+                    uint16_t x = static_cast<uint16_t>(_payload[2]) | (static_cast<uint16_t>(_payload[3]) << 8);
+                    uint16_t y = static_cast<uint16_t>(_payload[4]) | (static_cast<uint16_t>(_payload[5]) << 8);
+                    int8_t wheel = static_cast<int8_t>(_payload[6]);
+                    if (_mouseAbsCb) _mouseAbsCb(id, buttons, x, y, wheel);
                 }
 
                 // Reset to look for next frame

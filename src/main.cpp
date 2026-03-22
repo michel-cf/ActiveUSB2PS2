@@ -59,6 +59,18 @@ void handleModifiers(uint8_t mods) {
   Serial.println();
 }
 
+void handleMouseRel(uint8_t buttons, int8_t dx, int8_t dy, int8_t wheel) {
+  char bbuf[32];
+  CH9350L_mouseBtnsToString(buttons, bbuf, sizeof(bbuf));
+  Serial.printf("MouseRel btn=%s dx=%d dy=%d wheel=%d\n", bbuf, dx, dy, wheel);
+}
+
+void handleMouseAbs(uint8_t id, uint8_t buttons, uint16_t x, uint16_t y, int8_t wheel) {
+  char bbuf[32];
+  CH9350L_mouseBtnsToString(buttons, bbuf, sizeof(bbuf));
+  Serial.printf("MouseAbs id=%d btn=%s x=%d y=%d wheel=%d\n", id, bbuf, x, y, wheel);
+}
+
 void setup() {
   Serial.begin(115200);
   while (!Serial) { delay(10); }
@@ -67,6 +79,8 @@ void setup() {
   ch.onKeyDown(handleKeyDown);
   ch.onKeyUp(handleKeyUp);
   ch.onModifiersChanged(handleModifiers);
+  ch.onMouseRelative(handleMouseRel);
+  ch.onMouseAbsolute(handleMouseAbs);
 
   Serial.println("CH9350L example initialized");
 }
