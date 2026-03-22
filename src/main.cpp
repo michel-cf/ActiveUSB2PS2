@@ -62,13 +62,17 @@ void handleModifiers(uint8_t mods) {
 void handleMouseRel(uint8_t buttons, int8_t dx, int8_t dy, int8_t wheel) {
   char bbuf[32];
   CH9350L_mouseBtnsToString(buttons, bbuf, sizeof(bbuf));
-  Serial.printf("MouseRel btn=%s dx=%d dy=%d wheel=%d\n", bbuf, dx, dy, wheel);
+  char buf[64];
+  snprintf(buf, sizeof(buf), "MouseRel btn=%s dx=%d dy=%d wheel=%d", bbuf, dx, dy, wheel);
+  Serial.println(buf);
 }
 
 void handleMouseAbs(uint8_t id, uint8_t buttons, uint16_t x, uint16_t y, int8_t wheel) {
   char bbuf[32];
   CH9350L_mouseBtnsToString(buttons, bbuf, sizeof(bbuf));
-  Serial.printf("MouseAbs id=%d btn=%s x=%d y=%d wheel=%d\n", id, bbuf, x, y, wheel);
+  char buf[96];
+  snprintf(buf, sizeof(buf), "MouseAbs id=%u btn=%s x=%u y=%u wheel=%d", (unsigned)id, bbuf, (unsigned)x, (unsigned)y, wheel);
+  Serial.println(buf);
 }
 
 void setup() {
