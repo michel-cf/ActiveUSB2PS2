@@ -22,14 +22,10 @@ public:
     // Returns true if the command bytes were written to the UART.
     bool setKeyboardIndicators(uint8_t leds);
 
-    // Accept any Stream (HardwareSerial, SoftwareSerial, etc.)
-    explicit CH9350L(Stream &stream);
+    // Require a HardwareSerial instance (no SoftwareSerial/support)
+    explicit CH9350L(HardwareSerial &serial);
 
-    // Accept any Stream (HardwareSerial, SoftwareSerial, etc.)
-    // If you want the library to call the serial's `begin()` automatically,
-    // call `begin()` on the CH9350L instance after construction.
-
-    // If constructed with a type that supports begin(), this will call it.
+    // Begin the underlying HardwareSerial at `baud`. Call from setup().
     void begin(unsigned long baud = 115200);
     void update(); // call from main loop to process UART data
 
@@ -42,9 +38,7 @@ public:
     bool sendCommand(const uint8_t *data, size_t len);
 
 private:
-    Stream *_stream = nullptr;
-    void *_beginContext = nullptr;
-    void (*_beginFn)(void*, unsigned long) = nullptr;
+    HardwareSerial *_stream = nullptr;
 
     KeyCallback _keyDownCb = nullptr;
     KeyCallback _keyUpCb = nullptr;

@@ -1,15 +1,13 @@
 #include "CH9350L.h"
 
-CH9350L::CH9350L(Stream &stream)
+CH9350L::CH9350L(HardwareSerial &serial)
 {
-    _stream = &stream;
+    _stream = &serial;
 }
 
 void CH9350L::begin(unsigned long baud)
 {
-    if (_beginFn) {
-        _beginFn(_beginContext, baud);
-    }
+    if (_stream) _stream->begin(baud);
 }
 
 void CH9350L::update()
